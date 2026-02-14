@@ -3,95 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ভোটার সার্চ টুল - প্রো</</title>
+    <title>ভোটার ডাটাবেস সার্চ</title>
     <style>
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: white; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            font-family: 'Courier New', Courier, monospace; /* বটের মতো লুক দিতে */
+            background-color: #0d1117;
+            color: #c9d1d9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .container {
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
-            padding: 20px; border-radius: 15px; width: 95%; max-width: 600px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5); text-align: center;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        .search-box {
+            background: #161b22;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #30363d;
+            margin-bottom: 20px;
         }
         input {
-            width: 80%; padding: 12px; border-radius: 8px; border: none; margin-bottom: 15px; font-size: 16px;
+            width: 80%;
+            padding: 12px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            outline: none;
         }
         button {
-            padding: 10px 25px; border-radius: 8px; border: none; background: #27ae60; color: white; cursor: pointer;
+            padding: 10px 25px;
+            background: #238636;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
         }
-        #results { margin-top: 20px; }
-        
-        /* বক্সে সাজানোর ডিজাইন */
-        .voter-card {
-            background: rgba(0, 0, 0, 0.4);
-            margin-bottom: 15px;
+        button:hover { background: #2ea043; }
+
+        /* বটের রেজাল্টের মতো বক্স ডিজাইন */
+        .result-block {
+            background: #000; /* বটের ব্ল্যাক থিম */
+            color: #00ff00; /* হ্যাকার বা টার্মিনাল গ্রিন কালার */
             padding: 15px;
-            border-radius: 10px;
-            border-left: 5px solid #2980b9;
+            border-radius: 5px;
+            margin-bottom: 15px;
             text-align: left;
+            white-space: pre-wrap; /* লাইন ব্রেক ঠিক রাখার জন্য */
+            border-left: 4px solid #238636;
             font-size: 14px;
-            line-height: 1.6;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
-        .voter-card.female { border-left-color: #e84393; }
+        .gender-label {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 10px;
+            margin-bottom: 10px;
+            color: white;
+            font-weight: bold;
+        }
+        .male-bg { background: #1f6feb; }
+        .female-bg { background: #db61a2; }
         
-        .label { color: #aaa; font-weight: bold; margin-right: 5px; }
-        .data-value { color: #fff; }
-        .gender-badge {
-            float: right; font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #2980b9;
-        }
-        .female .gender-badge { background: #e84393; }
+        #status { margin-bottom: 10px; font-size: 14px; color: #8b949e; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
     <div class="container">
-        <h2>ভোটার সার্চ টুল 🔍</h2>
-        <input type="text" id="searchInput" placeholder="নাম বা তথ্য লিখে খুঁজুন...">
-        <br>
-        <button onclick="searchVoter()">খুঁজুন</button>
+        <div class="search-box">
+            <h2>ভোটার সার্চ টুল (Bot Web) 🔍</h2>
+            <input type="text" id="searchInput" placeholder="নাম বা তথ্য লিখে সার্চ করুন...">
+            <br>
+            <button onclick="searchVoter()">SEARCH</button>
+        </div>
 
+        <div id="status"></div>
         <div id="results"></div>
     </div>
 
     <script>
         async function searchVoter() {
-            const query = document.getElementById('searchInput').value.trim();
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
             const resultDiv = document.getElementById('results');
-            if (!query) return;
+            const statusDiv = document.getElementById('status');
+            
+            if (!query) {
+                statusDiv.innerHTML = "অনুগ্রহ করে কিছু লিখুন!";
+                return;
+            }
 
-            resultDiv.innerHTML = "খোঁজা হচ্ছে...";
-            let html = "";
+            statusDiv.innerHTML = "Searching GitHub database... Please wait.";
+            resultDiv.innerHTML = "";
+            let foundCount = 0;
 
             try {
-                // দুটি ফাইল থেকে ডেটা আনা
+                // আপনার বটের মতো দুটি ফাইল
                 const files = [
-                    { name: 'voter(male).txt', gender: 'MALE', class: '' },
-                    { name: 'voter(female).txt', gender: 'FEMALE', class: 'female' }
+                    { name: 'voter(male).txt', gender: 'MALE LIST', class: 'male-bg' },
+                    { name: 'voter(female).txt', gender: 'FEMALE LIST', class: 'female-bg' }
                 ];
 
                 for (let file of files) {
-                    const res = await fetch(file.name);
-                    const data = await res.text();
-                    const lines = data.split('\n');
-
-                    lines.forEach(line => {
-                        if (line.includes(query)) {
-                            // আপনার টেক্সট ফাইলের তথ্যগুলোকে আলাদা করা (ধরা যাক কমা বা স্পেস দিয়ে আলাদা)
-                            // যদি আপনার ফাইলে তথ্যগুলো "ID: 101 Name: Abir" এভাবে থাকে
-                            html += `
-                                <div class="voter-card ${file.class}">
-                                    <span class="gender-badge">${file.gender}</span>
-                                    <div><span class="label">তথ্য:</span> <span class="data-value">${line}</span></div>
+                    const response = await fetch(file.name);
+                    const content = await response.text();
+                    
+                    // আপনার বটের লজিক: splitting by '['
+                    const blocks = content.split("[");
+                    
+                    blocks.forEach(block => {
+                        if (!block.trim()) return;
+                        
+                        let fullBlock = "[" + block; // ব্র্যাকেট আবার যোগ করা
+                        
+                        if (fullBlock.toLowerCase().includes(query)) {
+                            foundCount++;
+                            const blockHtml = `
+                                <div class="result-block">
+                                    <span class="gender-label ${file.class}">${file.gender}</span><br>
+                                    ${fullBlock.trim()}
                                 </div>`;
+                            resultDiv.innerHTML += blockHtml;
                         }
                     });
                 }
 
-                resultDiv.innerHTML = html || "কোনো তথ্য পাওয়া যায়নি।";
-            } catch (e) {
-                resultDiv.innerHTML = "Error loading files!";
+                if (foundCount > 0) {
+                    statusDiv.innerHTML = `✅ Total ${foundCount} records found.`;
+                } else {
+                    statusDiv.innerHTML = `❌ No record found for '${query}'.`;
+                }
+
+            } catch (error) {
+                statusDiv.innerHTML = "Error: ফাইল খুঁজে পাওয়া যায়নি। নিশ্চিত করুন ফাইলের নাম সঠিক আছে।";
             }
         }
     </script>
