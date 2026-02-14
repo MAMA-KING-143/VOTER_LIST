@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ভোটার সার্চ টুল</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            margin: 0; color: white; overflow: hidden; user-select: none;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 20px; padding: 30px;
+            width: 90%; max-width: 500px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2); text-align: center;
+        }
+        input {
+            width: 80%; padding: 12px; border-radius: 10px; border: none;
+            background: rgba(255, 255, 255, 0.2); color: white; font-size: 16px; margin-bottom: 20px;
+        }
+        button {
+            padding: 12px 25px; border-radius: 10px; border: none;
+            background: #4caf50; color: white; cursor: pointer;
+        }
+        #results {
+            margin-top: 20px; max-height: 250px; overflow-y: auto;
+            text-align: left; padding: 10px; background: rgba(0, 0, 0, 0.2); border-radius: 10px;
+        }
+        .result-item {
+            padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); font-size: 14px;
+        }
+        .gender-tag {
+            font-weight: bold; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-right: 5px;
+        }
+        .male { background: #2196F3; }
+        .female { background: #E91E63; }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="container">
+        <h2>ভোটার সার্চ টুল 🔍</h2>
+        <input type="text" id="searchInput" placeholder="নাম লিখে সার্চ করুন...">
+        <br>
+        <button onclick="searchVoter()">খুঁজুন</button>
+
+        <div id="results">ফলাফল এখানে দেখাবে...</div>
+    </div>
+
+    <script>
+        async function searchVoter() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultDiv = document.getElementById('results');
+            
+            if (!query) {
+                resultDiv.innerHTML = "অনুগ্রহ করে একটি নাম লিখুন।";
+                return;
+            }
+
+            resultDiv.innerHTML = "উভয় ফাইল খোঁজা হচ্ছে...";
+            let resultsHTML = "";
+
+            try {
+                // Male ফাইল খোঁজা
+                const maleRes = await fetch('voter(male).txt');
+                const maleData = await maleRes.text();
+                const maleLines = maleData.split('\n');
+                maleLines.forEach(line => {
+                    if (line.includes(query)) {
+                        resultsHTML += `<div class="result-item"><span class="gender-tag male">MALE</span> ${line}</div>`;
+                    }
+                });
+
+                // Female ফাইল খোঁজা
+                const femaleRes = await fetch('voter(female).txt');
+                const femaleData = await femaleRes.text();
+                const femaleLines = femaleData.split('\n');
+                femaleLines.forEach(line => {
+                    if (line.includes(query)) {
+                        resultsHTML += `<div class="result-item"><span class="gender-tag female">FEMALE</span> ${line}</div>`;
+                    }
+                });
+
+                if (resultsHTML) {
+                    resultDiv.innerHTML = resultsHTML;
+                } else {
+                    resultDiv.innerHTML = "কোনো তথ্য পাওয়া যায়নি।";
+                }
+            } catch (error) {
+                resultDiv.innerHTML = "ফাইল লোড করতে সমস্যা হয়েছে। নিশ্চিত করুন Male.txt এবং Female.txt ফাইলগুলো আপলোড করা আছে।";
+            }
+        }
+    </script>
+</body>
+</html>
