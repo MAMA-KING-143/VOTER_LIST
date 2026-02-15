@@ -125,7 +125,7 @@
                     if (!res.ok) continue;
                     const text = await res.text();
                     
-                    // আপনার বটের লজিক অনুযায়ী split করা
+                    // আপনার বটের লজিক: splitting by '['
                     const blocks = text.split("[");
 
                     blocks.forEach(b => {
@@ -142,11 +142,12 @@
                 }
                 status.innerHTML = count > 0 ? `✅ মোট ${count}টি তথ্য পাওয়া গেছে।` : "❌ কোনো তথ্য পাওয়া যায়নি।";
             } catch (e) {
-                status.innerHTML = "⚠️ ফাইল লোড করতে সমস্যা হয়েছে! ফাইলগুলো সঠিক নামে আপলোড করা আছে কি?";
+                status.innerHTML = "⚠️ ফাইল লোড করতে সমস্যা হয়েছে! ফাইলগুলো সঠিক নামে আছে তো?";
             }
         }
     </script>
 </body>
+</html>
 </html>
 
                     blocks.forEach(b => {
@@ -268,6 +269,7 @@
     </script>
 </body>
 </html>
+
 
 
 
