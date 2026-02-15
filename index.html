@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ভোটার ডাটাবেস - আউলিযাপুর ইউনিয়ন</title>
+    <title>ভোটার ডাটাবেস - আউলিয়াপুর</title>
     <style>
         body {
             font-family: 'Courier New', monospace;
@@ -15,7 +15,6 @@
             flex-direction: column;
             align-items: center;
         }
-        /* হেডার ডিজাইন */
         .header-area {
             text-align: center;
             margin-bottom: 25px;
@@ -24,22 +23,10 @@
             width: 100%;
             max-width: 600px;
         }
-        .header-area h1 {
-            color: #58a6ff;
-            margin: 0;
-            font-size: 20px;
-            letter-spacing: 1px;
-        }
-        .header-area h2 {
-            color: #fdbb2d;
-            margin: 5px 0 0 0;
-            font-size: 18px;
-        }
-        .header-area p {
-            color: #8b949e;
-            font-size: 13px;
-            margin-top: 8px;
-        }
+        .header-area h1 { color: #58a6ff; margin: 0; font-size: 22px; }
+        .header-area h2 { color: #fdbb2d; margin: 5px 0 0 0; font-size: 18px; }
+        .header-area p { color: #8b949e; font-size: 13px; margin-top: 8px; }
+        
         .search-box {
             background: #161b22;
             padding: 20px;
@@ -73,12 +60,9 @@
             font-weight: bold;
             font-size: 16px;
         }
-        button:hover { background: #2ea043; }
-        
         #status { margin-top: 15px; font-size: 13px; color: #8b949e; }
         #results { width: 100%; max-width: 600px; margin-top: 20px; }
         
-        /* বটের রেজাল্ট কার্ড */
         .result-card {
             background: #000;
             border: 1px solid #30363d;
@@ -89,16 +73,10 @@
             color: #00ff00;
             font-size: 14px;
             border-left: 5px solid #238636;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
         .tag {
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 3px;
-            color: white;
-            font-weight: bold;
-            margin-bottom: 10px;
-            display: inline-block;
+            font-size: 10px; padding: 2px 6px; border-radius: 3px;
+            color: white; font-weight: bold; margin-bottom: 10px; display: inline-block;
         }
         .male-tag { background: #1f6feb; }
         .female-tag { background: #db61a2; }
@@ -107,7 +85,7 @@
 <body oncontextmenu="return false;">
 
     <div class="header-area">
-        <h1>৬ নং আউলিযাপুর ইউনিয়ন</h1>
+        <h1>৬ নং আউলিয়াপুর ইউনিয়ন</h1>
         <h2>৪ নং ওয়ার্ড</h2>
         <p>ভোটার তথ্য অনুসন্ধান টুল (ডিজিটাল ডাটাবেস)</p>
     </div>
@@ -131,11 +109,10 @@
                 return;
             }
 
-            status.innerHTML = "🔍 ডাটাবেস চেক করা হচ্ছে... দয়া করে অপেক্ষা করুন।";
+            status.innerHTML = "🔍 ডাটাবেস চেক করা হচ্ছে...";
             results.innerHTML = "";
             let count = 0;
 
-            // ফাইলগুলোর নাম আপনার বটের কোড অনুযায়ী রাখা হয়েছে
             const files = [
                 { name: 'voter(male).txt', label: 'MALE LIST', css: 'male-tag' },
                 { name: 'voter(female).txt', label: 'FEMALE LIST', css: 'female-tag' }
@@ -146,7 +123,28 @@
                     const res = await fetch(f.name);
                     if (!res.ok) continue;
                     const text = await res.text();
-                    
+                    const blocks = text.split("[");
+
+                    blocks.forEach(b => {
+                        if (!b.trim()) return;
+                        let fullBlock = "[" + b;
+                        if (fullBlock.toLowerCase().includes(query)) {
+                            count++;
+                            results.innerHTML += `
+                                <div class="result-card">
+                                    <span class="tag ${f.css}">${f.label}</span><br>${fullBlock.trim()}
+                                </div>`;
+                        }
+                    });
+                }
+                status.innerHTML = count > 0 ? `✅ মোট ${count}টি তথ্য পাওয়া গেছে।` : "❌ কোনো তথ্য পাওয়া যায়নি।";
+            } catch (e) {
+                status.innerHTML = "⚠️ ফাইল লোড করতে সমস্যা হয়েছে!";
+            }
+        }
+    </script>
+</body>
+</html>
                     // আপনার বটের লজিক: splitting by '['
                     const blocks = text.split("[");
 
@@ -269,4 +267,5 @@
     </script>
 </body>
 </html>
+
 
