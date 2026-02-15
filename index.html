@@ -3,113 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ভোটার ডাটাবেস সার্চ</title>
+    <title>ভোটার ডাটাবেস - আউলিযাপুর ইউনিয়ন</title>
     <style>
         body {
-            font-family: 'Courier New', Courier, monospace; /* বটের মতো লুক দিতে */
+            font-family: 'Courier New', monospace;
             background-color: #0d1117;
             color: #c9d1d9;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        .container {
+        /* হেডার ডিজাইন */
+        .header-area {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #238636;
+            padding-bottom: 15px;
             width: 100%;
             max-width: 600px;
-            text-align: center;
+        }
+        .header-area h1 {
+            color: #58a6ff;
+            margin: 0;
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+        .header-area h2 {
+            color: #fdbb2d;
+            margin: 5px 0 0 0;
+            font-size: 18px;
+        }
+        .header-area p {
+            color: #8b949e;
+            font-size: 13px;
+            margin-top: 8px;
         }
         .search-box {
             background: #161b22;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 12px;
             border: 1px solid #30363d;
-            margin-bottom: 20px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
         }
         input {
-            width: 80%;
+            width: 90%;
             padding: 12px;
             background: #0d1117;
             border: 1px solid #30363d;
-            color: white;
-            border-radius: 5px;
+            color: #00ff00;
+            border-radius: 6px;
             margin-bottom: 15px;
+            font-size: 16px;
             outline: none;
+            text-align: center;
         }
         button {
-            padding: 10px 25px;
+            width: 100%;
+            padding: 12px;
             background: #238636;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 16px;
         }
         button:hover { background: #2ea043; }
-
-        /* বটের রেজাল্টের মতো বক্স ডিজাইন */
-        .result-block {
-            background: #000; /* বটের ব্ল্যাক থিম */
-            color: #00ff00; /* হ্যাকার বা টার্মিনাল গ্রিন কালার */
+        
+        #status { margin-top: 15px; font-size: 13px; color: #8b949e; }
+        #results { width: 100%; max-width: 600px; margin-top: 20px; }
+        
+        /* বটের রেজাল্ট কার্ড */
+        .result-card {
+            background: #000;
+            border: 1px solid #30363d;
             padding: 15px;
-            border-radius: 5px;
+            border-radius: 8px;
             margin-bottom: 15px;
-            text-align: left;
-            white-space: pre-wrap; /* লাইন ব্রেক ঠিক রাখার জন্য */
-            border-left: 4px solid #238636;
+            white-space: pre-wrap;
+            color: #00ff00;
             font-size: 14px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            border-left: 5px solid #238636;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
-        .gender-label {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 3px;
+        .tag {
             font-size: 10px;
-            margin-bottom: 10px;
+            padding: 2px 6px;
+            border-radius: 3px;
             color: white;
             font-weight: bold;
+            margin-bottom: 10px;
+            display: inline-block;
         }
-        .male-bg { background: #1f6feb; }
-        .female-bg { background: #db61a2; }
-        
-        #status { margin-bottom: 10px; font-size: 14px; color: #8b949e; }
+        .male-tag { background: #1f6feb; }
+        .female-tag { background: #db61a2; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
-    <div class="container">
-        <div class="search-box">
-            <h2>ভোটার সার্চ টুল (Bot Web) 🔍</h2>
-            <input type="text" id="searchInput" placeholder="নাম বা তথ্য লিখে সার্চ করুন...">
-            <br>
-            <button onclick="searchVoter()">SEARCH</button>
-        </div>
-
-        <div id="status"></div>
-        <div id="results"></div>
+    <div class="header-area">
+        <h1>৬ নং আউলিযাপুর ইউনিয়ন</h1>
+        <h2>৪ নং ওয়ার্ড</h2>
+        <p>ভোটার তথ্য অনুসন্ধান টুল (ডিজিটাল ডাটাবেস)</p>
     </div>
 
+    <div class="search-box">
+        <input type="text" id="userInput" placeholder="নাম বা বাবার নাম লিখুন...">
+        <button onclick="startSearch()">অনুসন্ধান করুন</button>
+        <div id="status">সার্চ করার জন্য তথ্য লিখুন</div>
+    </div>
+
+    <div id="results"></div>
+
     <script>
-        async function searchVoter() {
-            const query = document.getElementById('searchInput').value.trim().toLowerCase();
-            const resultDiv = document.getElementById('results');
-            const statusDiv = document.getElementById('status');
-            
+        async function startSearch() {
+            const query = document.getElementById('userInput').value.trim().toLowerCase();
+            const results = document.getElementById('results');
+            const status = document.getElementById('status');
+
             if (!query) {
-                statusDiv.innerHTML = "অনুগ্রহ করে কিছু লিখুন!";
+                status.innerHTML = "❌ নাম না লিখে সার্চ করা সম্ভব নয়!";
                 return;
             }
 
-            statusDiv.innerHTML = "Searching GitHub database... Please wait.";
-            resultDiv.innerHTML = "";
-            let foundCount = 0;
+            status.innerHTML = "🔍 ডাটাবেস চেক করা হচ্ছে... দয়া করে অপেক্ষা করুন।";
+            results.innerHTML = "";
+            let count = 0;
+
+            // ফাইলগুলোর নাম আপনার বটের কোড অনুযায়ী রাখা হয়েছে
+            const files = [
+                { name: 'voter(male).txt', label: 'MALE LIST', css: 'male-tag' },
+                { name: 'voter(female).txt', label: 'FEMALE LIST', css: 'female-tag' }
+            ];
 
             try {
-                // আপনার বটের মতো দুটি ফাইল
-                const files = [
-                    { name: 'voter(male).txt', gender: 'MALE LIST', class: 'male-bg' },
-                    { name: 'voter(female).txt', gender: 'FEMALE LIST', class: 'female-bg' }
+                for (let f of files) {
+                    const res = await fetch(f.name);
+                    if (!res.ok) continue;
+                    const text = await res.text();
+                    
+                    // আপনার বটের লজিক: splitting by '['
+                    const blocks = text.split("[");
+
+                    blocks.forEach(b => {
+                        if (!b.trim()) return;
+                        let fullBlock = "[" + b;
+                        if (fullBlock.toLowerCase().includes(query)) {
+                            count++;
+                            results.innerHTML += `
+                                <div class="result-card">
+                                    <span class="tag ${f.css}">${f.label}</span><br>${fullBlock.trim()}
+                                </div>`;
+                        }
+                    });
+                }
+                
+                if (count > 0) {
+                    status.innerHTML = `✅ মোট ${count}টি তথ্য পাওয়া গেছে।`;
+                } else {
+                    status.innerHTML = `❌ '${query}' নামে কোনো তথ্য পাওয়া যায়নি।`;
+                }
+
+            } catch (e) {
+                status.innerHTML = "⚠️ ফাইল লোড করতে সমস্যা হয়েছে! ফাইলগুলো সঠিক নামে আপলোড করা আছে কি?";
+            }
+        }
+    </script>
+</body>
+</html>
+            const query = document.getElementById('userInput').value.trim().toLowerCase();
+            const results = document.getElementById('results');
+            const status = document.getElementById('status');
+
+            if (!query) {
+                status.innerHTML = "❌ নাম না লিখে সার্চ করা সম্ভব নয়!";
+                return;
+            }
+
+            status.innerHTML = "🔍 ডাটাবেস চেক করা হচ্ছে... দয়া করে অপেক্ষা করুন।";
+            results.innerHTML = "";
+            let count = 0;
+
+            // ফাইলগুলোর নাম আপনার বটের কোড অনুযায়ী রাখা হয়েছে
+            const files = [
+                { name: 'voter(male).txt', label: 'MALE LIST', css: 'male-tag' },
+                { name: 'voter(female).txt', label: 'FEMALE LIST', css: 'female-tag' }
+            ];
+
+            try {
+                for (let f of files) {
+                    const res = await fetch(f.name);
+                    if (!res.ok) continue;
+                    const text = await res.text();
+                    
+                    // আপনার বটের লজিক: splitting by '['
+                    const blocks = text.split("[");
+
+                    blocks.forEach(b => {
+                        if (!b.trim()) return;
+                        let fullBlock = "[" + b;
+                        if (fullBlock.toLowerCase().includes(query)) {
+                            count++;
+                            results.innerHTML += `
+                                <div class="result-card">
+                                    <span class="tag ${f.css}">${f.label}</span><br>${fullBlock.trim()}
+                                </div>`;
+                        }
+                    });
+                }
+                
+                if (count > 0) {
+                    status.innerHTML = `✅ মোট ${count}টি তথ্য পাওয়া গেছে।`;
+                } else {
+                    status.innerHTML = `❌ '${query}' নামে কোনো তথ্য পাওয়া যায়নি।`;
+                }
+
+            } catch (e) {
+                status.innerHTML = "⚠️ ফাইল লোড করতে সমস্যা হয়েছে! ফাইলগুলো সঠিক নামে আপলোড করা আছে কি?";
+            }
+        }
+    </script>
+</body>
+</html>
                 ];
 
                 for (let file of files) {
@@ -149,3 +269,4 @@
     </script>
 </body>
 </html>
+
