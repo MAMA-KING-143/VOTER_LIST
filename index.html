@@ -41,7 +41,7 @@
             status.innerHTML = "🔍 ডাটাবেস চেক করা হচ্ছে...";
             results.innerHTML = "";
             let count = 0;
-            const files = [{ name: 'voter(mle).txt', label: 'MALE LIST', css: 'male-tag' }, { name: 'voter(femle).txt', label: 'FEMALE LIST', css: 'female-tag' }];
+            const files = [{ name: 'voter(male).txt', label: 'MALE LIST', css: 'male-tag' }, { name: 'voter(female).txt', label: 'FEMALE LIST', css: 'female-tag' }];
             try {
                 for (let f of files) {
                     const res = await fetch(f.name);
