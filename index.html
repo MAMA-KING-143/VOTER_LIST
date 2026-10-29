@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ভোটার ডাটাবেস ৬ নং আউলিয়াপুর ইউনিয়ন (২০২৬)</title>
+    <title>ভোটার ডাটাবেস ৩ নং আউলিয়াপুর ইউনিয়ন (২০২৬)</title>
     <style>
         body { font-family: 'Courier New', monospace; background-color: #0d1117; color: #c9d1d9; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
         .header-area { text-align: center; margin-bottom: 25px; border-bottom: 2px solid #238636; padding-bottom: 15px; width: 100%; max-width: 600px; }
@@ -22,7 +22,7 @@
 </head>
 <body oncontextmenu="return false;">
     <div class="header-area">
-        <h1>৬ নং আউলিয়াপুর ইউনিয়ন</h1>
+        <h1>৩ নং আউলিয়াপুর ইউনিয়ন</h1>
         <h2>৪ নং ওয়ার্ড</h2>
         </p> তুরান্ত ভোটার তালিকা ডিজিটাল ডাটাবেস</p>
     </div>
@@ -41,7 +41,7 @@
             status.innerHTML = "🔍 ডাটাবেস চেক করা হচ্ছে...";
             results.innerHTML = "";
             let count = 0;
-            const files = [{ name: 'voter(male).txt', label: 'MALE LIST', css: 'male-tag' }, { name: 'voter(female).txt', label: 'FEMALE LIST', css: 'female-tag' }];
+            const files = [{ name: 'voter(১male).txt', label: 'MALE LIST', css: 'male-tag' }, { name: 'voter(১female).txt', label: 'FEMALE LIST', css: 'female-tag' }];
             try {
                 for (let f of files) {
                     const res = await fetch(f.name);
